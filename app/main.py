@@ -8,15 +8,16 @@ from app.models import Base
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine) 
     yield
+
 
 app = FastAPI(lifespan=lifespan)
 
+# CORS (add this block)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # dev-friendly; tighten in prod
     allow_methods=["*"],
     allow_headers=["*"],
 )
-

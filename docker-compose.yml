@@ -1,22 +1,21 @@
+version: "3.8"
+
 services:
   db:
     image: postgres:17-alpine
     env_file: .env.docker
     volumes:
       - postgres-data:/var/lib/postgresql/data
-
     ports:
       - "5433:5432"
-    
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 -U \"$${POSTGRES_USER:-app}\" -d \"$${POSTGRES_DB:-appdb}\""]
       interval: 5s
       retries: 10
-
     restart: unless-stopped
 
   api:
-    build:
+    build: .
     env_file: .env.docker
     environment:
       - APP_ENV=docker
@@ -28,4 +27,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  postgreas-data: {}
+  postgres-data: {}

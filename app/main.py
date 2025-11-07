@@ -1,12 +1,22 @@
-from fastapi import FastAPI, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.database import engine
+from app.models import Base
 
-from app.database import engine, SessionLocal
-from app.models import Base, UserDB
-from app.schemas import UserCreate, UserRead
+#Replacing @app.on_event("startup")
 
-app = FastAPI()
-Base.metadata.create_all(bind=engine)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 

@@ -178,7 +178,7 @@ def replace_user(user_id: int, payload: UserCreate, db: Session = Depends(get_db
 
     try:
         db.commit()
-        sb.refresh(user)
+        db.refresh(user)
     except IntegrityError:
         db.rollback()
         raise HTTPException(status_code=409, detail="User update Failed")
